@@ -1,0 +1,13 @@
+.pio/
+.vscode/
+.firebase/
+.firebaserc
+.env
+*.local
+src/firebase_config.h
+server/env.js
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+

@@ -1,0 +1,2540 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FIREGUARD — Fire Safety Management & Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --border-subtle: #edf2f7;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      
+      
+      --color-safe: #16a34a;
+      --color-safe-bg: #f0fdf4;
+      --color-safe-border: #bbf7d0;
+
+      --color-warn: #d97706;
+      --color-warn-bg: #fffbeb;
+      --color-warn-border: #fde68a;
+
+      --color-crit: #dc2626;
+      --color-crit-bg: #fef2f2;
+      --color-crit-border: #fecaca;
+
+      --color-info: #2563eb;
+      --color-info-bg: #eff6ff;
+      --color-info-border: #bfdbfe;
+
+      --color-offline: #64748b;
+      --color-offline-bg: #f1f5f9;
+      --color-offline-border: #cbd5e1;
+
+      --sidebar-width: 250px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13.5px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: #ffffff;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 1000;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .sidebar-brand {
+      padding: 20px 20px 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background-color: #0f172a;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #0f172a;
+      line-height: 1.2;
+    }
+
+    .brand-text p {
+      margin: 0;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .sidebar-menu {
+      padding: 16px 12px;
+      list-style: none;
+      margin: 0;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .menu-item {
+      margin-bottom: 4px;
+    }
+
+    .menu-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 12px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      position: relative;
+    }
+
+    .menu-link i {
+      font-size: 15px;
+      width: 18px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .menu-link:hover {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .menu-link:hover i {
+      color: var(--text-main);
+    }
+
+    .menu-link.active {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .menu-link.active i {
+      color: var(--color-info);
+    }
+
+    .menu-link.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 6px;
+      bottom: 6px;
+      width: 3px;
+      background-color: var(--color-info);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border-color);
+      background-color: #fafafa;
+    }
+
+    .system-status-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 11.5px;
+    }
+
+    .status-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--color-safe);
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--color-safe);
+    }
+
+    .dot-indicator.offline {
+      background-color: var(--color-offline);
+    }
+
+    .dot-indicator.critical {
+      background-color: var(--color-crit);
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+    }
+
+    .sync-timestamp {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      color: #475569;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .user-meta .name {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .user-meta .role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    
+    .main-wrapper {
+      margin-left: var(--sidebar-width);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    
+    .topbar {
+      height: 64px;
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text-secondary);
+    }
+
+    .page-heading h2 {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .page-heading p {
+      margin: 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .operational-banner-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--color-safe-bg);
+      border: 1px solid var(--color-safe-border);
+      color: var(--color-safe);
+    }
+
+    .operational-banner-pill.warning-mode {
+      background-color: var(--color-warn-bg);
+      border-color: var(--color-warn-border);
+      color: var(--color-warn);
+    }
+
+    .operational-banner-pill.critical-mode {
+      background-color: var(--color-crit-bg);
+      border-color: var(--color-crit-border);
+      color: var(--color-crit);
+    }
+
+    .clock-widget {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+      font-weight: 500;
+      padding: 0 6px;
+      border-left: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+    }
+
+    .icon-action-btn {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 34px;
+      height: 34px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13.5px;
+      cursor: pointer;
+      position: relative;
+      transition: background-color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .icon-action-btn:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+      color: var(--text-main);
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background-color: var(--color-crit);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+    }
+
+    
+    .dashboard-body {
+      padding: 24px 28px 40px 28px;
+    }
+
+    
+    .dashboard-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      margin-bottom: 20px;
+    }
+
+    .card-header-clean {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #ffffff;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-title-text {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .card-body-clean {
+      padding: 18px;
+    }
+
+    
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .kpi-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-icon-wrap {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    
+    .active-alerts-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .alert-incident-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      transition: border-color 0.15s ease;
+    }
+
+    .alert-incident-row.critical {
+      border-left: 4px solid var(--color-crit);
+      background-color: #fffafb;
+    }
+
+    .alert-incident-row.warning {
+      border-left: 4px solid var(--color-warn);
+      background-color: #fffdf9;
+    }
+
+    .alert-incident-row.info {
+      border-left: 4px solid var(--color-info);
+      background-color: #f8fafc;
+    }
+
+    .incident-meta-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .incident-severity-badge {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .severity-critical {
+      background-color: var(--color-crit);
+      color: #ffffff;
+    }
+
+    .severity-warning {
+      background-color: var(--color-warn);
+      color: #ffffff;
+    }
+
+    .severity-info {
+      background-color: #e2e8f0;
+      color: #334155;
+    }
+
+    .incident-details .device-name {
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .incident-details .location-time {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .incident-sensor-data {
+      font-family: monospace;
+      font-size: 12px;
+      padding: 3px 8px;
+      background-color: #f1f5f9;
+      border-radius: 4px;
+      color: #1e293b;
+    }
+
+    .incident-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-action-sm {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-action-sm:hover {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .btn-action-sm.primary-ack {
+      background-color: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .btn-action-sm.primary-ack:hover {
+      background-color: #1e293b;
+    }
+
+    .empty-state-notice {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state-notice i {
+      font-size: 28px;
+      color: var(--color-safe);
+      margin-bottom: 8px;
+    }
+
+    
+    .building-view-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .floor-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: #ffffff;
+      transition: background-color 0.15s ease;
+      cursor: pointer;
+    }
+
+    .floor-row:hover {
+      background-color: #f8fafc;
+    }
+
+    .floor-row.active-floor {
+      border-color: #0284c7;
+      background-color: #f0f9ff;
+    }
+
+    .floor-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .floor-number-badge {
+      width: 28px;
+      height: 28px;
+      background-color: #f1f5f9;
+      color: #334155;
+      font-weight: 600;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .floor-name {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-main);
+    }
+
+    .floor-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .floor-status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .status-normal {
+      background-color: var(--color-safe-bg);
+      color: var(--color-safe);
+      border: 1px solid var(--color-safe-border);
+    }
+
+    .status-warning {
+      background-color: var(--color-warn-bg);
+      color: var(--color-warn);
+      border: 1px solid var(--color-warn-border);
+    }
+
+    .status-critical {
+      background-color: var(--color-crit-bg);
+      color: var(--color-crit);
+      border: 1px solid var(--color-crit-border);
+    }
+
+    .status-offline {
+      background-color: var(--color-offline-bg);
+      color: var(--color-offline);
+      border: 1px solid var(--color-offline-border);
+    }
+
+    .status-sos-trapped {
+      background-color: #dc2626;
+      color: #ffffff;
+      border: 1px solid #991b1b;
+      font-weight: 700;
+      animation: pulseTrappedBadge 1.2s infinite ease-in-out;
+    }
+
+    @keyframes pulseTrappedBadge {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+      50% { transform: scale(1.04); box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.25); }
+    }
+
+    .floor-row.sos-trapped-active {
+      border: 2px solid #dc2626 !important;
+      background-color: #fff1f2 !important;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+    }
+
+    
+    .sos-emergency-banner {
+      background-color: #881337;
+      border: 1px solid #be123c;
+      border-left: 6px solid #e11d48;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 22px;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(190, 18, 60, 0.25);
+      animation: sosPulseGlow 2.5s infinite ease-in-out;
+    }
+
+    @keyframes sosPulseGlow {
+      0%, 100% { box-shadow: 0 4px 14px rgba(190, 18, 60, 0.25); }
+      50% { box-shadow: 0 6px 22px rgba(225, 29, 72, 0.45); }
+    }
+
+    .sos-banner-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .sos-banner-main {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .sos-alarm-icon {
+      width: 44px;
+      height: 44px;
+      background-color: #e11d48;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .sos-banner-heading {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #ffffff;
+      margin-bottom: 3px;
+    }
+
+    .sos-banner-details {
+      font-size: 12.5px;
+      color: #ffe4e6;
+      line-height: 1.4;
+    }
+
+    .sos-banner-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-sos-dispatch {
+      background-color: #ffffff;
+      color: #9f1239;
+      font-weight: 700;
+      font-size: 12px;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-sos-dispatch:hover {
+      background-color: #ffe4e6;
+      color: #881337;
+    }
+
+    .alert-incident-row.p1-trapped-row {
+      border-left: 5px solid #dc2626 !important;
+      background-color: #fff1f2 !important;
+      border-color: #fecdd3 !important;
+    }
+
+    
+    .device-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .device-table th {
+      padding: 8px 12px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .device-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+    }
+
+    .device-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .filter-tabs-sm {
+      display: flex;
+      gap: 4px;
+    }
+
+    .filter-btn-sm {
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      background-color: #ffffff;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .filter-btn-sm.active {
+      background-color: #0f172a;
+      border-color: #0f172a;
+      color: #ffffff;
+    }
+
+    
+    .health-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .health-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 12.5px;
+    }
+
+    .health-row:last-child {
+      border-bottom: none;
+    }
+
+    .health-label {
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .health-status {
+      font-weight: 600;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    
+    .enterprise-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .enterprise-table th {
+      padding: 10px 14px;
+      background-color: #fafafa;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .enterprise-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .enterprise-table tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    
+    .modal-content {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 20px;
+    }
+
+    .modal-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    
+    @media (max-width: 992px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      .main-wrapper {
+        margin-left: 0;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .kpi-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 576px) {
+      .kpi-row {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        padding: 0 16px;
+      }
+      .dashboard-body {
+        padding: 16px;
+      }
+      .clock-widget {
+        display: none;
+      }
+    }
+  </style>
+
+  
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+        </div>
+        <div class="brand-text">
+          <h1>FIREGUARD</h1>
+          <p>Hệ Thống Quản Lý PCCC</p>
+        </div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a href="#" class="menu-link active">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Bảng Điều Khiển</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#active-alerts-section" class="menu-link">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Cảnh Báo Cháy</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#devices-section" class="menu-link">
+            <i class="fa-solid fa-microchip"></i>
+            <span>Thiết Bị</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#building-status-section" class="menu-link">
+            <i class="fa-regular fa-building"></i>
+            <span>Khu Vực</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#history-section" class="menu-link">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>Lịch Sử Báo Động</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#" class="menu-link" onclick="exportCsvReport()">
+            <i class="fa-solid fa-file-lines"></i>
+            <span>Xuất Báo Cáo</span>
+          </a>
+        </li>
+        <li class="menu-item">
+          <a href="#" class="menu-link" onclick="openConfigModal()">
+            <i class="fa-solid fa-gear"></i>
+            <span>Cài Đặt Hệ Thống</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <span class="text-muted">TRẠNG THÁI HỆ THỐNG</span>
+          <span class="status-pill-badge" id="sidebar-status-pill">
+            <span class="dot-indicator" id="sidebar-status-dot"></span>
+            <span id="sidebar-status-text">HOẠT ĐỘNG</span>
+          </span>
+        </div>
+        <div class="sync-timestamp">
+          Đồng bộ lần cuối: <span id="sidebar-sync-time">--:--:--</span>
+        </div>
+        <div class="user-profile">
+          <div class="user-avatar">TB</div>
+          <div class="user-meta">
+            <div class="name">Trực Ban Giám Sát</div>
+            <div class="role">An Ninh Tòa Nhà · Ca 1</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-heading">
+            <h2>Hệ Thống Giám Sát & Báo Cháy Thông Minh</h2>
+            <p>Giám sát thời gian thực và quản lý báo động PCCC tòa nhà</p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          
+          <div class="operational-banner-pill" id="operational-banner-pill">
+            <span class="dot-indicator" id="pill-dot"></span>
+            <span id="pill-text">HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG</span>
+          </div>
+
+          <div class="clock-widget" id="topbar-clock">
+            <span id="clock-date">--/--/----</span> · <strong id="clock-time">--:--:--</strong>
+          </div>
+
+          <button class="icon-action-btn" id="btn-audio-toggle" onclick="toggleAlarmBuzzerSound()" title="Bật/Tắt âm thanh còi báo">
+            <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+          </button>
+
+          <button class="icon-action-btn" title="Xem cảnh báo hỏa hoạn đang diễn ra" onclick="scrollToAlerts()">
+            <i class="fa-regular fa-bell"></i>
+            <span class="notification-badge d-none" id="bell-alert-badge">0</span>
+          </button>
+
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              Thao Tác
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+              <li><button class="dropdown-item text-danger fw-semibold" onclick="triggerBuildingEvacuation()"><i class="fa-solid fa-bullhorn me-2"></i> Kích Hoạt Còi Sơ Tán Khẩn Cấp</button></li>
+              <li><button class="dropdown-item text-success" onclick="resetAllBuildingToNormal()"><i class="fa-solid fa-rotate-left me-2"></i> Đặt Lại Toàn Bộ Về Bình Thường</button></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item" onclick="openConfigModal()"><i class="fa-solid fa-sliders me-2"></i> Cấu Hình Kết Nối Firebase</button></li>
+            </ul>
+          </div>
+
+        </div>
+      </header>
+
+      <main class="dashboard-body">
+
+        <div id="sos-dispatch-banner" class="sos-emergency-banner d-none">
+          <div class="sos-banner-inner">
+            <div class="sos-banner-main">
+              <div class="sos-alarm-icon">
+                <i class="fa-solid fa-person-burst fa-beat-fade"></i>
+              </div>
+              <div>
+                <div class="sos-banner-heading">
+                  <span class="badge bg-warning text-dark me-2">ƯU TIÊN CỨU HỘ SỐ 1 (P1)</span>
+                  <i class="fa-solid fa-triangle-exclamation text-warning me-1"></i> CẢNH BÁO KHẨN CẤP: PHÁT HIỆN NGƯỜI MẮC KẸT VÀ TIẾNG LA HÉT!
+                </div>
+                <div class="sos-banner-details" id="sos-trapped-rooms-desc">
+                  Phát hiện âm thanh la hét cầu cứu (>85dB) trong điều kiện hỏa hoạn! Đội cứu nạn cần điều động thiết bị phá cửa & bình dưỡng khí ngay lập tức!
+                </div>
+              </div>
+            </div>
+            <div class="sos-banner-btn-group">
+              <button class="btn-sos-dispatch" onclick="scrollToTrappedRoom()">
+                <i class="fa-solid fa-location-crosshairs"></i> Định Vị Phòng Cứu Hộ
+              </button>
+              <button class="btn btn-sm btn-outline-light" onclick="dispatchRescueTeam()">
+                <i class="fa-solid fa-truck-medical me-1"></i> Xuất Lệnh Cứu Hộ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <section class="kpi-row">
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">TỔNG THIẾT BỊ GIÁM SÁT</span>
+              <div class="kpi-icon-wrap" style="background-color: #f1f5f9; color: #475569;">
+                <i class="fa-solid fa-microchip"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-total-devices">3</div>
+            <div class="kpi-meta" id="kpi-total-devices-meta">3 nút cảm biến phòng (P.101, P.201, P.301)</div>
+          </div>
+
+          <div class="kpi-card" id="kpi-card-alarms">
+            <div class="kpi-header">
+              <span class="kpi-label">SỰ CỐ BÁO ĐỘNG</span>
+              <div class="kpi-icon-wrap" id="kpi-alarm-icon" style="background-color: #f1f5f9; color: var(--text-muted);">
+                <i class="fa-solid fa-bell"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-active-alarms">00</div>
+            <div class="kpi-meta" id="kpi-alarm-meta">Không phát hiện sự cố</div>
+          </div>
+
+          <div class="kpi-card" id="kpi-card-warnings">
+            <div class="kpi-header">
+              <span class="kpi-label">CẢNH BÁO NGUY CƠ</span>
+              <div class="kpi-icon-wrap" style="background-color: #fef3c7; color: #d97706;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="kpi-active-warnings">00</div>
+            <div class="kpi-meta" id="kpi-warning-meta">Nguy cơ khói hoặc nhiệt tăng</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-label">TRẠNG THÁI HỆ THỐNG</span>
+              <div class="kpi-icon-wrap" style="background-color: #dcfce7; color: #16a34a;">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+            </div>
+            <div class="kpi-value text-success" id="kpi-system-status">BÌNH THƯỜNG</div>
+            <div class="kpi-meta">Toàn hệ thống hoạt động ổn định</div>
+          </div>
+        </section>
+
+        <section class="dashboard-card" id="active-alerts-section">
+          <div class="card-header-clean">
+            <div class="card-title-group">
+              <i class="fa-solid fa-triangle-exclamation text-danger fs-5"></i>
+              <div>
+                <h3 class="card-title-text">Cảnh Báo Cháy Đang Diễn Ra</h3>
+              </div>
+              <span class="badge bg-danger ms-2" id="badge-active-alert-count">0 ĐANG DIỄN RA</span>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-danger" onclick="silenceAllBuzzers()">
+                <i class="fa-solid fa-volume-xmark me-1"></i> Tắt Tiếng Còi
+              </button>
+            </div>
+          </div>
+          <div class="card-body-clean">
+            <div class="active-alerts-container" id="active-alerts-list">
+              <div class="empty-state-notice" id="no-alerts-placeholder">
+                <i class="fa-regular fa-circle-check"></i>
+                <div class="fw-semibold text-dark mt-1">Không Có Sự Cố Báo Cháy</div>
+                <div class="small text-muted">Tất cả các tầng và cảm biến đang hoạt động ở mức thông số an toàn.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="row g-3 mb-4" id="building-status-section">
+          
+          <div class="col-xl-7 col-lg-6">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="card-header-clean">
+                <div class="card-title-group">
+                  <i class="fa-regular fa-building text-secondary"></i>
+                  <h3 class="card-title-text">Trạng Thái Các Tầng Giám Sát</h3>
+                </div>
+              </div>
+              <div class="card-body-clean">
+                <div class="building-view-list" id="building-floor-list">
+                  
+                  <div class="floor-row" id="row-floor-3" onclick="inspectFloor('Tầng 3')">
+                    <div class="floor-left">
+                      <div class="floor-number-badge">T3</div>
+                      <div>
+                        <div class="floor-name">Tầng 3 · Khu VIP</div>
+                        <div class="floor-sub" id="desc-floor-3">Nút mạng ESP32_ROOM_301 · Suite 301</div>
+                      </div>
+                    </div>
+                    <span class="floor-status-badge status-normal" id="status-floor-3">BÌNH THƯỜNG</span>
+                  </div>
+
+                  <div class="floor-row" id="row-floor-2" onclick="inspectFloor('Tầng 2')">
+                    <div class="floor-left">
+                      <div class="floor-number-badge">T2</div>
+                      <div>
+                        <div class="floor-name">Tầng 2 · Khu Standard</div>
+                        <div class="floor-sub" id="desc-floor-2">Nút mạng ESP32_ROOM_201 · Phòng 201</div>
+                      </div>
+                    </div>
+                    <span class="floor-status-badge status-normal" id="status-floor-2">BÌNH THƯỜNG</span>
+                  </div>
+
+                  <div class="floor-row" id="row-floor-1" onclick="inspectFloor('Tầng 1')">
+                    <div class="floor-left">
+                      <div class="floor-number-badge" style="background-color: #e0f2fe; color: #0369a1;">T1</div>
+                      <div>
+                        <div class="floor-name">Tầng 1 · Khu Deluxe</div>
+                        <div class="floor-sub" id="desc-floor-1">Nút mạng ESP32_ROOM_101 · Phòng 101</div>
+                      </div>
+                    </div>
+                    <span class="floor-status-badge status-normal" id="status-floor-1">BÌNH THƯỜNG</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-5 col-lg-6" id="devices-section">
+            <div class="dashboard-card h-100 mb-0">
+              <div class="card-header-clean">
+                <div class="card-title-group">
+                  <i class="fa-solid fa-microchip text-secondary"></i>
+                  <h3 class="card-title-text">Nút Cảm Biến Thời Gian Thực</h3>
+                </div>
+                <div class="filter-tabs-sm">
+                  <button class="filter-btn-sm active" onclick="filterDeviceView('ALL', this)">Tất Cả</button>
+                  <button class="filter-btn-sm" onclick="filterDeviceView('ONLINE', this)">Trực Tuyến</button>
+                  <button class="filter-btn-sm" onclick="filterDeviceView('OFFLINE', this)">Ngoại Tuyến</button>
+                </div>
+              </div>
+              <div class="card-body-clean">
+                <table class="device-table mb-3">
+                  <thead>
+                    <tr>
+                      <th>Nút Phòng</th>
+                      <th style="text-align: center;">Khói / Nhiệt</th>
+                      <th style="text-align: center;">Lửa / Mic SOS</th>
+                      <th style="width: 100px; text-align: right;">Trạng Thái</th>
+                    </tr>
+                  </thead>
+                  <tbody id="device-nodes-tbody">
+                    <tr id="device-row-ESP32_ROOM_101">
+                      <td><i class="fa-solid fa-door-open me-1 text-primary"></i> <strong>P.101 (T1)</strong></td>
+                      <td style="text-align: center;" id="device-telemetry-ESP32_ROOM_101">-- PPM · --°C</td>
+                      <td style="text-align: center;" id="device-sensors-ESP32_ROOM_101">--</td>
+                      <td style="text-align: right;" id="device-badge-ESP32_ROOM_101"><span class="badge bg-secondary">CHỜ DỮ LIỆU</span></td>
+                    </tr>
+                    <tr id="device-row-ESP32_ROOM_201">
+                      <td><i class="fa-solid fa-door-open me-1 text-primary"></i> <strong>P.201 (T2)</strong></td>
+                      <td style="text-align: center;" id="device-telemetry-ESP32_ROOM_201">-- PPM · --°C</td>
+                      <td style="text-align: center;" id="device-sensors-ESP32_ROOM_201">--</td>
+                      <td style="text-align: right;" id="device-badge-ESP32_ROOM_201"><span class="badge bg-secondary">CHỜ DỮ LIỆU</span></td>
+                    </tr>
+                    <tr id="device-row-ESP32_ROOM_301">
+                      <td><i class="fa-solid fa-door-open me-1 text-primary"></i> <strong>P.301 (T3)</strong></td>
+                      <td style="text-align: center;" id="device-telemetry-ESP32_ROOM_301">-- PPM · --°C</td>
+                      <td style="text-align: center;" id="device-sensors-ESP32_ROOM_301">--</td>
+                      <td style="text-align: right;" id="device-badge-ESP32_ROOM_301"><span class="badge bg-secondary">CHỜ DỮ LIỆU</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="pt-3 border-top">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="kpi-label">SỨC KHỎE HỆ THỐNG</span>
+                    <span class="badge bg-success-subtle text-success" id="overall-health-text">100% HOẠT ĐỘNG TỐT</span>
+                  </div>
+                  <ul class="health-list">
+                    <li class="health-row">
+                      <span class="health-label"><i class="fa-solid fa-network-wired text-muted"></i> Bộ Điều Khiển Báo Cháy ESP32</span>
+                      <span class="health-status text-success" id="health-esp32-status"><i class="fa-solid fa-check"></i> HOẠT ĐỘNG</span>
+                    </li>
+                    <li class="health-row">
+                      <span class="health-label"><i class="fa-solid fa-cloud text-muted"></i> Cổng Kết Nối Đám Mây Mạng</span>
+                      <span class="health-status text-success" id="health-cloud-status"><i class="fa-solid fa-check"></i> HOẠT ĐỘNG</span>
+                    </li>
+                    <li class="health-row">
+                      <span class="health-label"><i class="fa-solid fa-database text-muted"></i> Bộ Đồng Bộ Dữ Liệu Thời Gian Thực</span>
+                      <span class="health-status text-success"><i class="fa-solid fa-check"></i> HOẠT ĐỘNG</span>
+                    </li>
+                    <li class="health-row">
+                      <span class="health-label"><i class="fa-regular fa-clock text-muted"></i> Tín Hiệu Nhịp Tim Cuối Cùng</span>
+                      <span class="health-status text-muted font-monospace" id="health-last-sync">--:--:--</span>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="dashboard-card" id="history-section">
+          <div class="card-header-clean">
+            <div class="card-title-group">
+              <i class="fa-solid fa-list-check text-secondary"></i>
+              <h3 class="card-title-text">Lịch Sử Sự Cố Báo Động</h3>
+              <span class="text-muted small" id="history-counter-text">(0 sự kiện được ghi nhận)</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <select class="form-select form-select-sm" id="filter-history-severity" onchange="filterHistoryTable()" style="width: 140px; font-size: 12px;">
+                <option value="ALL">Tất Cả Mức Độ</option>
+                <option value="CRITICAL">KHẨN CẤP</option>
+                <option value="WARNING">CẢNH BÁO</option>
+                <option value="INFO">THÔNG TIN</option>
+              </select>
+              <select class="form-select form-select-sm" id="filter-history-status" onchange="filterHistoryTable()" style="width: 140px; font-size: 12px;">
+                <option value="ALL">Tất Cả Trạng Thái</option>
+                <option value="ACTIVE">Đang Diễn Ra</option>
+                <option value="RESOLVED">Đã Xử Lý</option>
+              </select>
+              <button class="btn btn-sm btn-outline-secondary" onclick="exportCsvReport()" title="Xuất Báo Cáo CSV">
+                <i class="fa-solid fa-download me-1"></i> Xuất CSV
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="clearAllAlarmHistory()" title="Xóa Lịch Sử Sự Cố">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="enterprise-table">
+              <thead>
+                <tr>
+                  <th style="width: 110px;">Thời Gian</th>
+                  <th style="width: 180px;">Thiết Bị</th>
+                  <th style="width: 140px;">Vị Trí</th>
+                  <th>Mô Tả Sự Cố</th>
+                  <th style="width: 110px;">Mức Độ</th>
+                  <th style="width: 130px;">Trạng Thái</th>
+                  <th style="width: 130px; text-align: right;">Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody id="alarm-history-tbody">
+                <tr>
+                  <td colspan="7" class="text-center py-4 text-muted">
+                    Không có bản ghi lịch sử sự cố nào.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center py-2 px-3 border-top bg-light" style="font-size: 12px;">
+            <span class="text-muted" id="pagination-info">Hiển thị 0 trong số 0 sự kiện</span>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" id="btn-page-prev" onclick="paginateHistory(-1)" disabled>Trước</button>
+              <span class="btn btn-outline-secondary disabled" id="page-num-display">1 / 1</span>
+              <button class="btn btn-outline-secondary" id="btn-page-next" onclick="paginateHistory(1)" disabled>Sau</button>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  
+  <div class="modal fade" id="modalConfig" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fa-solid fa-gear me-2"></i> Cài Đặt Hệ Thống & Kết Nối Đám Mây</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Đường dẫn Firebase Realtime Database URL</label>
+            <input type="text" id="cfg-database-url" class="form-control form-control-sm" placeholder="https://<project-id>-default-rtdb.asia-southeast1.firebasedatabase.app">
+            <div class="form-text" style="font-size: 11px;">Đường dẫn cơ sở dữ liệu thời gian thực Firebase RTDB</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Mã Dự Án (Project ID)</label>
+            <input type="text" id="cfg-project-id" class="form-control form-control-sm" placeholder="VD: du-an-khach-san-101">
+          </div>
+          <hr class="my-3">
+          <h6 class="small fw-bold text-primary mb-2"><i class="fa-brands fa-telegram me-1"></i> Cảnh Báo Khẩn Cấp Qua Telegram Bot</h6>
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" id="cfg-telegram-enabled">
+            <label class="form-check-label small fw-semibold" for="cfg-telegram-enabled">Tự động gửi tin nhắn khi có Hỏa hoạn / Có người kẹt</label>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-semibold mb-1">Telegram Bot Token</label>
+            <input type="text" id="cfg-telegram-token" class="form-control form-control-sm" placeholder="VD: 123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+            <div class="form-text" style="font-size: 11px;">Tạo bot miễn phí từ @BotFather trên Telegram</div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-semibold mb-1">Telegram Chat ID</label>
+            <div class="input-group input-group-sm">
+              <input type="text" id="cfg-telegram-chatid" class="form-control" placeholder="VD: -10012345678 hoặc Chat ID cá nhân">
+              <button class="btn btn-outline-primary" type="button" onclick="testTelegramAlert()">Thử nghiệm gửi</button>
+            </div>
+            <div class="form-text" style="font-size: 11px;">Nhóm quản lý khách sạn hoặc Chat ID nhận cảnh báo</div>
+          </div>
+          <hr class="my-3">
+          <h6 class="small fw-bold text-danger mb-2"><i class="fa-solid fa-bullhorn me-1"></i> Báo Động Hú Còi Điện Thoại Qua ntfy.sh (Miễn Phí 100%)</h6>
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" id="cfg-ntfy-enabled">
+            <label class="form-check-label small fw-semibold" for="cfg-ntfy-enabled">Bật hú còi âm lượng MAX (Bỏ qua chế độ im lặng)</label>
+          </div>
+          <div class="mb-2">
+            <label class="form-label small fw-semibold mb-1">Tên Kênh (Topic ntfy)</label>
+            <div class="input-group input-group-sm">
+              <input type="text" id="cfg-ntfy-topic" class="form-control" placeholder="VD: khachsan_fireguard_sos">
+              <button class="btn btn-outline-danger" type="button" onclick="testNtfyAlert()">Thử nghiệm hú còi</button>
+            </div>
+            <div class="form-text" style="font-size: 11px;">Cài app ntfy trên điện thoại và đăng ký (Subscribe) cùng tên kênh này để nhận báo động</div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-sm btn-dark" onclick="saveFirebaseConfig()">Lưu & Kết Nối Lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalInspect" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="inspect-title">Chẩn Đoán Thiết Bị & Nút Mạng</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="inspect-body">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="env.js"></script>
+  <script>
+    const DEFAULT_CONFIG = {
+      databaseURL: (window.ENV_CONFIG && window.ENV_CONFIG.databaseURL) || "",
+      apiKey: (window.ENV_CONFIG && window.ENV_CONFIG.apiKey) || "",
+      projectId: (window.ENV_CONFIG && window.ENV_CONFIG.projectId) || "",
+      telegramEnabled: (window.ENV_CONFIG && window.ENV_CONFIG.telegramEnabled) || false,
+      telegramToken: (window.ENV_CONFIG && window.ENV_CONFIG.telegramToken) || "",
+      telegramChatId: (window.ENV_CONFIG && window.ENV_CONFIG.telegramChatId) || "",
+      ntfyEnabled: (window.ENV_CONFIG && window.ENV_CONFIG.ntfyEnabled) || false,
+      ntfyTopic: (window.ENV_CONFIG && window.ENV_CONFIG.ntfyTopic) || ""
+    };
+
+    let appConfig = { ...DEFAULT_CONFIG };
+    let firebaseApp = null;
+    let db = null;
+    const dispatchedTelegramAlerts = new Set();
+
+    
+    const MONITORED_NODES = {
+      ESP32_ROOM_101: {
+        id: "ESP32_ROOM_101",
+        name: "Cụm Cảm Biến P.101 (Khói, Nhiệt, Lửa, Mic SOS)",
+        floor: "Tầng 1",
+        room: "Phòng 101 (Deluxe)",
+        type: "Phần Cứng Wokwi Trực Tiếp",
+        hardware: true
+      },
+      ESP32_ROOM_201: {
+        id: "ESP32_ROOM_201",
+        name: "Cụm Cảm Biến P.201 (Khói, Nhiệt, Lửa, Mic SOS)",
+        floor: "Tầng 2",
+        room: "Phòng 201 (Standard)",
+        type: "Phần Cứng Wokwi Trực Tiếp",
+        hardware: true
+      },
+      ESP32_ROOM_301: {
+        id: "ESP32_ROOM_301",
+        name: "Cụm Cảm Biến P.301 (Khói, Nhiệt, Lửa, Mic SOS)",
+        floor: "Tầng 3",
+        room: "Phòng 301 (VIP Suite)",
+        type: "Phần Cứng Wokwi Trực Tiếp",
+        hardware: true
+      }
+    };
+
+    let liveNodesData = {
+      ESP32_ROOM_101: null,
+      ESP32_ROOM_201: null,
+      ESP32_ROOM_301: null
+    };
+
+    let allAlertEvents = [];
+    let filteredAlertEvents = [];
+    let currentHistoryPage = 1;
+    const historyPerPage = 8;
+    let soundEnabled = true;
+    let audioContext = null;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initClock();
+      loadStoredConfig();
+      initFirebaseClient();
+    });
+
+    function initClock() {
+      const clockDate = document.getElementById('clock-date');
+      const clockTime = document.getElementById('clock-time');
+
+      function tick() {
+        const now = new Date();
+        if (clockDate) {
+          clockDate.textContent = now.toLocaleDateString('vi-VN', {
+            weekday: 'short',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+          });
+        }
+        if (clockTime) {
+          clockTime.textContent = now.toLocaleTimeString('vi-VN', { hour12: false });
+        }
+      }
+      tick();
+      setInterval(tick, 1000);
+    }
+
+    function loadStoredConfig() {
+      const stored = localStorage.getItem('FIREGUARD_CONFIG');
+      if (stored) {
+        try {
+          appConfig = JSON.parse(stored);
+        } catch (e) {}
+      }
+      const urlInput = document.getElementById('cfg-database-url');
+      const pidInput = document.getElementById('cfg-project-id');
+      const tgEnabled = document.getElementById('cfg-telegram-enabled');
+      const tgToken = document.getElementById('cfg-telegram-token');
+      const tgChatId = document.getElementById('cfg-telegram-chatid');
+
+      if (urlInput) urlInput.value = appConfig.databaseURL || '';
+      if (pidInput) pidInput.value = appConfig.projectId || '';
+      if (tgEnabled) tgEnabled.checked = !!appConfig.telegramEnabled;
+      if (tgToken) tgToken.value = appConfig.telegramToken || '';
+      if (tgChatId) tgChatId.value = appConfig.telegramChatId || '';
+      const ntfyEnabled = document.getElementById('cfg-ntfy-enabled');
+      const ntfyTopic = document.getElementById('cfg-ntfy-topic');
+      if (ntfyEnabled) ntfyEnabled.checked = !!appConfig.ntfyEnabled;
+      if (ntfyTopic) ntfyTopic.value = appConfig.ntfyTopic || '';
+    }
+
+    function openConfigModal() {
+      const modal = new bootstrap.Modal(document.getElementById('modalConfig'));
+      modal.show();
+    }
+
+    function saveFirebaseConfig() {
+      appConfig.databaseURL = document.getElementById('cfg-database-url').value.trim() || DEFAULT_CONFIG.databaseURL;
+      appConfig.projectId = document.getElementById('cfg-project-id').value.trim() || DEFAULT_CONFIG.projectId;
+      appConfig.telegramEnabled = document.getElementById('cfg-telegram-enabled')?.checked || false;
+      appConfig.telegramToken = document.getElementById('cfg-telegram-token')?.value.trim() || '';
+      appConfig.telegramChatId = document.getElementById('cfg-telegram-chatid')?.value.trim() || '';
+      appConfig.ntfyEnabled = document.getElementById('cfg-ntfy-enabled')?.checked || false;
+      appConfig.ntfyTopic = document.getElementById('cfg-ntfy-topic')?.value.trim() || '';
+
+      localStorage.setItem('FIREGUARD_CONFIG', JSON.stringify(appConfig));
+      location.reload();
+    }
+
+    async function sendTelegramAlert(text) {
+      if (!appConfig.telegramEnabled || !appConfig.telegramToken || !appConfig.telegramChatId) return;
+      try {
+        const url = `https://api.telegram.org/bot${encodeURIComponent(appConfig.telegramToken)}/sendMessage`;
+        await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: appConfig.telegramChatId,
+            text: text,
+            parse_mode: 'HTML'
+          })
+        });
+      } catch (err) {
+        console.error('[Telegram Dispatch Error]:', err);
+      }
+    }
+
+    async function sendNtfyAlert(title, message, isTrapped = false) {
+      if (!appConfig.ntfyEnabled || !appConfig.ntfyTopic) return;
+      try {
+        await fetch(`https://ntfy.sh/${encodeURIComponent(appConfig.ntfyTopic)}`, {
+          method: 'POST',
+          body: message,
+          headers: {
+            'Title': title,
+            'Priority': isTrapped ? 'urgent' : 'high',
+            'Tags': isTrapped ? 'rotating_light,fire,sos' : 'fire,warning'
+          }
+        });
+      } catch (e) {}
+    }
+
+    async function testNtfyAlert() {
+      const topic = document.getElementById('cfg-ntfy-topic')?.value.trim();
+      if (!topic) {
+        alert('Vui lòng nhập tên kênh (Topic ntfy)!');
+        return;
+      }
+      try {
+        const res = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+          method: 'POST',
+          body: 'Báo động thử nghiệm từ hệ thống FIREGUARD! Kênh ntfy kết nối thành công.',
+          headers: {
+            'Title': '[FIREGUARD TEST] BÁO ĐỘNG THỬ NGHIỆM',
+            'Priority': 'urgent',
+            'Tags': 'rotating_light,fire'
+          }
+        });
+        if (res.ok) {
+          alert('Đã gửi tín hiệu ntfy thành công! Hãy mở app ntfy trên điện thoại kiểm tra.');
+        } else {
+          alert('Gửi ntfy thất bại: ' + res.statusText);
+        }
+      } catch (e) {
+        alert('Lỗi kết nối ntfy: ' + e.message);
+      }
+    }
+
+    async function testTelegramAlert() {
+      const token = document.getElementById('cfg-telegram-token')?.value.trim();
+      const chatId = document.getElementById('cfg-telegram-chatid')?.value.trim();
+      if (!token || !chatId) {
+        alert('Vui lòng nhập Bot Token và Chat ID trước khi bấm thử nghiệm!');
+        return;
+      }
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: '<b>[FIREGUARD BÁO CHÁY THÔNG MINH]</b>\nKết nối Telegram Bot thành công!\nHệ thống sẵn sàng nhận cảnh báo hỏa hoạn và cứu nạn khẩn cấp P1.',
+            parse_mode: 'HTML'
+          })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert('Gửi thử nghiệm thành công! Vui lòng kiểm tra tin nhắn Telegram của bạn.');
+        } else {
+          alert('Telegram báo lỗi: ' + (data.description || 'Lỗi không xác định'));
+        }
+      } catch (e) {
+        alert('Không thể kết nối tới máy chủ Telegram: ' + e.message);
+      }
+    }
+
+    function initFirebaseClient() {
+      const cloudStatus = document.getElementById('health-cloud-status');
+      try {
+        if (!firebase.apps.length) {
+          firebaseApp = firebase.initializeApp({
+            databaseURL: appConfig.databaseURL,
+            apiKey: appConfig.apiKey,
+            projectId: appConfig.projectId
+          });
+        } else {
+          firebaseApp = firebase.app();
+        }
+        db = firebase.database();
+
+        db.ref('.info/connected').on('value', (snap) => {
+          const isConnected = snap.val() === true;
+          const sidebarDot = document.getElementById('sidebar-status-dot');
+          const sidebarText = document.getElementById('sidebar-status-text');
+
+          if (isConnected) {
+            if (sidebarDot) sidebarDot.className = 'dot-indicator';
+            if (sidebarText) sidebarText.textContent = 'HOẠT ĐỘNG';
+            if (cloudStatus) cloudStatus.innerHTML = '<i class="fa-solid fa-check text-success"></i> HOẠT ĐỘNG';
+          } else {
+            if (sidebarDot) sidebarDot.className = 'dot-indicator offline';
+            if (sidebarText) sidebarText.textContent = 'NGOẠI TUYẾN';
+            if (cloudStatus) cloudStatus.innerHTML = '<i class="fa-solid fa-xmark text-danger"></i> NGOẠI TUYẾN';
+          }
+        });
+
+        
+        bindDeviceListeners();
+        
+        bindAlertsListener();
+
+      } catch (err) {
+        console.error('Firebase initialization error:', err);
+        if (cloudStatus) cloudStatus.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-danger"></i> CONFIG ERROR';
+      }
+    }
+
+    function bindDeviceListeners() {
+      const refDevices = db.ref('devices');
+      refDevices.on('value', (snapshot) => {
+        const val = snapshot.val() || {};
+        const now = Date.now();
+        const syncStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+        
+        document.getElementById('sidebar-sync-time').textContent = syncStr;
+        document.getElementById('health-last-sync').textContent = syncStr;
+
+        
+        Object.keys(MONITORED_NODES).forEach(nodeId => {
+          liveNodesData[nodeId] = val[nodeId] ? val[nodeId].state : null;
+        });
+
+        
+        updateBuildingFloorState();
+        
+        updateKpiMetrics();
+      });
+    }
+
+    function bindAlertsListener() {
+      const refAlerts = db.ref('alerts');
+      refAlerts.on('value', (snapshot) => {
+        allAlertEvents = [];
+        snapshot.forEach((child) => {
+          const item = {
+            id: child.key,
+            ...child.val()
+          };
+          allAlertEvents.push(item);
+
+          
+          if (!dispatchedTelegramAlerts.has(child.key)) {
+            dispatchedTelegramAlerts.add(child.key);
+            const isFresh = (Date.now() - (item.created_at || Date.now())) < 60000;
+            if (isFresh && (item.severity === 'CRITICAL' || item.alert_type === 'HUMAN_TRAPPED' || item.human_trapped == 1)) {
+              const isTrapped = (item.alert_type === 'HUMAN_TRAPPED' || item.human_trapped == 1);
+              const text = `<b>[FIREGUARD BÁO ĐỘNG PCCC]</b>\n` +
+                           `<b>Vị trí:</b> ${item.room_name || item.location || 'Khu vực khách sạn'}\n` +
+                           `<b>Phân loại:</b> ${isTrapped ? 'ƯU TIÊN P1: CÓ NGƯỜI KẸT & TIẾNG LA HÉT!' : (item.title || 'HỎA HOẠN')}\n` +
+                           `<b>Nhiệt độ:</b> ${item.temperature ? parseFloat(item.temperature).toFixed(1) + '°C' : 'N/A'} | <b>Khói:</b> ${item.smoke_ppm ?? 'N/A'} PPM\n` +
+                           `<b>Chi tiết:</b> ${item.message || item.reason || 'Kích hoạt sơ tán ngay!'}\n` +
+                           `<b>Thời gian:</b> ${new Date(item.created_at || Date.now()).toLocaleTimeString('vi-VN')}`;
+              sendTelegramAlert(text);
+              const ntfyTieuDe = isTrapped ? 'P1: CÓ NGƯỜI KẸT TRONG ĐÁM CHÁY!' : 'BÁO ĐỘNG CHÁY KHÁCH SẠN!';
+              const ntfyNoiDung = `Vị trí: ${item.room_name || item.location || 'Khách sạn'}\nKhói: ${item.smoke_ppm ?? 0} PPM, Nhiệt độ: ${item.temperature ?? 0}°C\n${item.message || ''}`;
+              sendNtfyAlert(ntfyTieuDe, ntfyNoiDung, isTrapped);
+            }
+          }
+        });
+
+        allAlertEvents.sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
+
+        renderActiveAlertsPanel();
+        filterHistoryTable();
+        updateKpiMetrics();
+      });
+    }
+
+    function renderActiveAlertsPanel() {
+      const container = document.getElementById('active-alerts-list');
+      const badgeCount = document.getElementById('badge-active-alert-count');
+      const bellBadge = document.getElementById('bell-alert-badge');
+
+      const activeAlerts = allAlertEvents.filter(a => {
+        return !a.is_resolved && (a.severity === 'CRITICAL' || a.severity === 'WARNING');
+      });
+
+      activeAlerts.sort((a, b) => {
+        const aTrapped = (a.alert_type === 'HUMAN_TRAPPED' || a.human_trapped == 1 || a.rescue_priority === 'P1_URGENT') ? 1 : 0;
+        const bTrapped = (b.alert_type === 'HUMAN_TRAPPED' || b.human_trapped == 1 || b.rescue_priority === 'P1_URGENT') ? 1 : 0;
+        if (aTrapped !== bTrapped) return bTrapped - aTrapped;
+        return (b.created_at || 0) - (a.created_at || 0);
+      });
+
+      badgeCount.textContent = `${activeAlerts.length} ĐANG DIỄN RA`;
+      if (activeAlerts.length > 0) {
+        badgeCount.className = 'badge bg-danger ms-2';
+        bellBadge.textContent = activeAlerts.length;
+        bellBadge.classList.remove('d-none');
+      } else {
+        badgeCount.className = 'badge bg-secondary ms-2';
+        bellBadge.classList.add('d-none');
+      }
+
+      if (activeAlerts.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state-notice">
+            <i class="fa-regular fa-circle-check"></i>
+            <div class="fw-semibold text-dark mt-1">Không Có Sự Cố Báo Cháy</div>
+            <div class="small text-muted">Tất cả các tầng và cảm biến đang hoạt động ở mức thông số an toàn.</div>
+          </div>
+        `;
+        return;
+      }
+
+      let html = '';
+      activeAlerts.forEach(alert => {
+        const isTrapped = (alert.alert_type === 'HUMAN_TRAPPED' || alert.human_trapped == 1 || alert.rescue_priority === 'P1_URGENT');
+        const isCritical = alert.severity === 'CRITICAL';
+        const timeStr = alert.created_at ? new Date(alert.created_at).toLocaleTimeString('vi-VN', { hour12: false }) : '--:--:--';
+        const dateStr = alert.created_at ? new Date(alert.created_at).toLocaleDateString('vi-VN') : '';
+        const severityClass = isCritical ? 'severity-critical' : 'severity-warning';
+        let rowClass = isCritical ? 'critical' : 'warning';
+        if (isTrapped) rowClass += ' p1-trapped-row';
+        
+        const nodeInfo = MONITORED_NODES[alert.device_id] || {};
+        const locationText = alert.location || `${nodeInfo.floor || 'Tầng ?'} · ${nodeInfo.room || alert.room_name || 'Phòng ?'}`;
+        const deviceName = alert.title || nodeInfo.name || alert.device_id;
+
+        let severityBadgeHtml = `<span class="incident-severity-badge ${severityClass}">[${isCritical ? 'KHẨN CẤP' : 'CẢNH BÁO'}]</span>`;
+        if (isTrapped) {
+          severityBadgeHtml = `<span class="incident-severity-badge severity-critical"><i class="fa-solid fa-person-burst me-1 fa-beat"></i> [P1: CÓ NGƯỜI KẸT]</span>`;
+        } else if (alert.alert_type === 'PANIC_SOS') {
+          severityBadgeHtml = `<span class="incident-severity-badge severity-warning"><i class="fa-solid fa-person-circle-exclamation me-1"></i> [AN NINH / SOS]</span>`;
+        }
+
+        html += `
+          <div class="alert-incident-row ${rowClass}">
+            <div class="incident-meta-group">
+              ${severityBadgeHtml}
+              <div class="incident-details">
+                <div class="device-name ${isTrapped ? 'text-danger fw-bold' : ''}">
+                  ${isTrapped ? '<i class="fa-solid fa-triangle-exclamation text-danger me-1"></i>' : ''} ${escapeHtml(deviceName)}
+                </div>
+                <div class="location-time">
+                  <i class="fa-regular fa-building me-1"></i> ${escapeHtml(locationText)} · Phát hiện lúc <strong>${timeStr}</strong> (${dateStr})
+                </div>
+              </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+              <div class="incident-sensor-data d-none d-md-block">
+                ${isTrapped ? '<span class="badge bg-danger text-white me-2"><i class="fa-solid fa-microphone-lines me-1"></i> TIẾNG HÉT SOS (>85dB)</span>' : ''}Khói: <b>${alert.smoke_ppm ?? 0}</b> ppm · Nhiệt: <b>${alert.temperature ?? 0}</b>°C ${alert.flame_detected ? '· <span class="text-danger fw-bold">PHÁT HIỆN LỬA</span>' : ''}
+              </div>
+              <div class="incident-actions">
+                <button class="btn-action-sm" onclick="inspectAlertDetails('${alert.id}')"><i class="fa-solid fa-eye me-1"></i> Xem Chi Tiết</button>
+                <button class="btn-action-sm text-danger" onclick="resolveAlert('${alert.id}')"><i class="fa-solid fa-check-double me-1"></i> Đóng Sự Cố</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      if (activeAlerts.some(a => a.severity === 'CRITICAL')) {
+        const hasTrapped = activeAlerts.some(a => a.alert_type === 'HUMAN_TRAPPED' || a.human_trapped == 1);
+        playBuzzerSound(hasTrapped);
+      }
+    }
+
+    function updateBuildingFloorState() {
+      const now = Date.now();
+      const f1Data = liveNodesData.ESP32_ROOM_101;
+      const f1Badge = document.getElementById('status-floor-1');
+      const f1Desc = document.getElementById('desc-floor-1');
+      const row1 = document.getElementById('row-floor-1');
+      if (f1Data) {
+        const isF1Offline = f1Data.last_seen && (now - f1Data.last_seen > 25000);
+        const isTrapped1 = f1Data.human_trapped == 1 || (f1Data.scream_detected == 1 && f1Data.status === 'FIRE_ALARM');
+        const isFire = f1Data.status === 'FIRE_ALARM';
+        const isWarn = f1Data.status === 'SMOKE_WARN';
+        const isPanic1 = f1Data.status === 'PANIC_SOS' || f1Data.panic_sos == 1;
+        if (isTrapped1) {
+          f1Badge.className = 'floor-status-badge status-sos-trapped';
+          f1Badge.innerHTML = '<i class="fa-solid fa-person-burst me-1"></i> P1: CÓ NGƯỜI KẸT';
+          if (row1) row1.classList.add('sos-trapped-active');
+          f1Desc.innerHTML = `<span class="text-danger fw-bold"><i class="fa-solid fa-bullhorn fa-beat-fade me-1"></i> PHÁT HIỆN TIẾNG LA HÉT SOS! NẠN NHÂN MẮC KẸT</span> · Khói: ${f1Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f1Data.temperature ?? 0).toFixed(1)}°C, Cửa: ${f1Data.servo_angle ?? 0}°`;
+        } else if (isPanic1) {
+          if (row1) row1.classList.remove('sos-trapped-active');
+          f1Badge.className = 'floor-status-badge status-warning';
+          f1Badge.innerHTML = '<i class="fa-solid fa-person-circle-exclamation me-1"></i> CẦU CỨU SOS';
+          f1Desc.innerHTML = `<span class="text-warning fw-bold"><i class="fa-solid fa-bullhorn me-1"></i> TIẾNG HÉT CẦU CỨU KHẨN CẤP</span> · Chưa phát hiện cháy · Cần an ninh hỗ trợ`;
+        } else if (isF1Offline && !isFire && !isWarn) {
+          f1Badge.className = 'floor-status-badge status-offline';
+          f1Badge.innerHTML = '<i class="fa-solid fa-signal text-secondary me-1"></i> NGOẠI TUYẾN';
+          f1Desc.innerHTML = `Phòng 101 · <span class="text-secondary">Mất kết nối (>25s) · Kiểm tra nguồn/WiFi</span>`;
+        } else {
+          if (row1) row1.classList.remove('sos-trapped-active');
+          f1Badge.className = isFire ? 'floor-status-badge status-critical' : (isWarn ? 'floor-status-badge status-warning' : 'floor-status-badge status-normal');
+          f1Badge.textContent = isFire ? 'BÁO CHÁY' : (isWarn ? 'CẢNH BÁO' : 'BÌNH THƯỜNG');
+          f1Desc.textContent = `Phòng 101 · Khói: ${f1Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f1Data.temperature ?? 0).toFixed(1)}°C, Cửa: ${f1Data.servo_angle ?? 0}°`;
+        }
+      }
+
+      const f2Data = liveNodesData.ESP32_ROOM_201;
+      const f2Badge = document.getElementById('status-floor-2');
+      const f2Desc = document.getElementById('desc-floor-2');
+      const row2 = document.getElementById('row-floor-2');
+      if (f2Data) {
+        const isF2Offline = f2Data.last_seen && (now - f2Data.last_seen > 25000);
+        const isTrapped2 = f2Data.human_trapped == 1 || (f2Data.scream_detected == 1 && f2Data.status === 'FIRE_ALARM');
+        const isFire = f2Data.status === 'FIRE_ALARM';
+        const isWarn = f2Data.status === 'SMOKE_WARN';
+        const isPanic2 = f2Data.status === 'PANIC_SOS' || f2Data.panic_sos == 1;
+        if (isTrapped2) {
+          f2Badge.className = 'floor-status-badge status-sos-trapped';
+          f2Badge.innerHTML = '<i class="fa-solid fa-person-burst me-1"></i> P1: CÓ NGƯỜI KẸT';
+          if (row2) row2.classList.add('sos-trapped-active');
+          f2Desc.innerHTML = `<span class="text-danger fw-bold"><i class="fa-solid fa-bullhorn fa-beat-fade me-1"></i> PHÁT HIỆN TIẾNG LA HÉT SOS! NẠN NHÂN MẮC KẸT</span> · Khói: ${f2Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f2Data.temperature ?? 0).toFixed(1)}°C`;
+        } else if (isPanic2) {
+          if (row2) row2.classList.remove('sos-trapped-active');
+          f2Badge.className = 'floor-status-badge status-warning';
+          f2Badge.innerHTML = '<i class="fa-solid fa-person-circle-exclamation me-1"></i> CẦU CỨU SOS';
+          f2Desc.innerHTML = `<span class="text-warning fw-bold"><i class="fa-solid fa-bullhorn me-1"></i> TIẾNG HÉT CẦU CỨU KHẨN CẤP</span> · Chưa phát hiện cháy · Cần an ninh hỗ trợ`;
+        } else if (isF2Offline && !isFire && !isWarn) {
+          f2Badge.className = 'floor-status-badge status-offline';
+          f2Badge.innerHTML = '<i class="fa-solid fa-signal text-secondary me-1"></i> NGOẠI TUYẾN';
+          f2Desc.innerHTML = `Phòng 201 · <span class="text-secondary">Mất kết nối (>25s) · Kiểm tra nguồn/WiFi</span>`;
+        } else {
+          if (row2) row2.classList.remove('sos-trapped-active');
+          f2Badge.className = isFire ? 'floor-status-badge status-critical' : (isWarn ? 'floor-status-badge status-warning' : 'floor-status-badge status-normal');
+          f2Badge.textContent = isFire ? 'BÁO CHÁY' : (isWarn ? 'CẢNH BÁO' : 'BÌNH THƯỜNG');
+          f2Desc.textContent = `Phòng 201 · Khói: ${f2Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f2Data.temperature ?? 0).toFixed(1)}°C`;
+        }
+      }
+
+      const f3Data = liveNodesData.ESP32_ROOM_301;
+      const f3Badge = document.getElementById('status-floor-3');
+      const f3Desc = document.getElementById('desc-floor-3');
+      const row3 = document.getElementById('row-floor-3');
+      if (f3Data) {
+        const isF3Offline = f3Data.last_seen && (now - f3Data.last_seen > 25000);
+        const isTrapped3 = f3Data.human_trapped == 1 || (f3Data.scream_detected == 1 && f3Data.status === 'FIRE_ALARM');
+        const isFire = f3Data.status === 'FIRE_ALARM';
+        const isWarn = f3Data.status === 'SMOKE_WARN';
+        const isPanic3 = f3Data.status === 'PANIC_SOS' || f3Data.panic_sos == 1;
+        if (isTrapped3) {
+          f3Badge.className = 'floor-status-badge status-sos-trapped';
+          f3Badge.innerHTML = '<i class="fa-solid fa-person-burst me-1"></i> P1: CÓ NGƯỜI KẸT';
+          if (row3) row3.classList.add('sos-trapped-active');
+          f3Desc.innerHTML = `<span class="text-danger fw-bold"><i class="fa-solid fa-bullhorn fa-beat-fade me-1"></i> PHÁT HIỆN TIẾNG LA HÉT SOS! NẠN NHÂN MẮC KẸT</span> · Khói: ${f3Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f3Data.temperature ?? 0).toFixed(1)}°C`;
+        } else if (isPanic3) {
+          if (row3) row3.classList.remove('sos-trapped-active');
+          f3Badge.className = 'floor-status-badge status-warning';
+          f3Badge.innerHTML = '<i class="fa-solid fa-person-circle-exclamation me-1"></i> CẦU CỨU SOS';
+          f3Desc.innerHTML = `<span class="text-warning fw-bold"><i class="fa-solid fa-bullhorn me-1"></i> TIẾNG HÉT CẦU CỨU KHẨN CẤP</span> · Chưa phát hiện cháy · Cần an ninh hỗ trợ`;
+        } else if (isF3Offline && !isFire && !isWarn) {
+          f3Badge.className = 'floor-status-badge status-offline';
+          f3Badge.innerHTML = '<i class="fa-solid fa-signal text-secondary me-1"></i> NGOẠI TUYẾN';
+          f3Desc.innerHTML = `Suite 301 · <span class="text-secondary">Mất kết nối (>25s) · Kiểm tra nguồn/WiFi</span>`;
+        } else {
+          if (row3) row3.classList.remove('sos-trapped-active');
+          f3Badge.className = isFire ? 'floor-status-badge status-critical' : (isWarn ? 'floor-status-badge status-warning' : 'floor-status-badge status-normal');
+          f3Badge.textContent = isFire ? 'BÁO CHÁY' : (isWarn ? 'CẢNH BÁO' : 'BÌNH THƯỜNG');
+          f3Desc.textContent = `Suite 301 · Khói: ${f3Data.smoke_ppm ?? 0} ppm, Nhiệt: ${parseFloat(f3Data.temperature ?? 0).toFixed(1)}°C`;
+        }
+      }
+
+      const trappedRooms = [];
+      if (f1Data && (f1Data.human_trapped == 1 || (f1Data.scream_detected == 1 && f1Data.status === 'FIRE_ALARM'))) {
+        trappedRooms.push({ id: 'ESP32_ROOM_101', name: 'Phòng 101 (Tầng 1)' });
+      }
+      if (f2Data && (f2Data.human_trapped == 1 || (f2Data.scream_detected == 1 && f2Data.status === 'FIRE_ALARM'))) {
+        trappedRooms.push({ id: 'ESP32_ROOM_201', name: 'Phòng 201 (Tầng 2)' });
+      }
+      if (f3Data && (f3Data.human_trapped == 1 || (f3Data.scream_detected == 1 && f3Data.status === 'FIRE_ALARM'))) {
+        trappedRooms.push({ id: 'ESP32_ROOM_301', name: 'Phòng 301 (Tầng 3)' });
+      }
+
+      const hasTrappedAlert = allAlertEvents.some(a => !a.is_resolved && (a.alert_type === 'HUMAN_TRAPPED' || a.human_trapped == 1));
+      if (hasTrappedAlert && trappedRooms.length === 0) {
+        trappedRooms.push({ id: 'GENERAL', name: 'Khu Vực Báo Động' });
+      }
+
+      const sosBanner = document.getElementById('sos-dispatch-banner');
+      const sosRoomsDesc = document.getElementById('sos-trapped-rooms-desc');
+
+      if (trappedRooms.length > 0) {
+        if (sosBanner) sosBanner.classList.remove('d-none');
+        if (sosRoomsDesc) {
+          const roomNames = trappedRooms.map(r => `<strong>${r.name}</strong>`).join(', ');
+          sosRoomsDesc.innerHTML = `Phát hiện âm thanh la hét dữ dội trong điều kiện cháy tại: ${roomNames}! Lực lượng PCCC & Cứu nạn cứu hộ cần <strong>ƯU TIÊN TIẾP CẬN ĐẦU TIÊN (P1)</strong> kèm thiết bị phá khóa & bình thở oxy!`;
+        }
+      } else {
+        if (sosBanner) sosBanner.classList.add('d-none');
+      }
+
+      const hasFire = [f1Data, f2Data, f3Data].some(d => d && d.status === 'FIRE_ALARM');
+      const hasWarn = [f1Data, f2Data, f3Data].some(d => d && d.status === 'SMOKE_WARN');
+      const hasPanic = [f1Data, f2Data, f3Data].some(d => d && (d.status === 'PANIC_SOS' || d.panic_sos == 1));
+
+      const bannerPill = document.getElementById('operational-banner-pill');
+      const pillDot = document.getElementById('pill-dot');
+      const pillText = document.getElementById('pill-text');
+
+      if (trappedRooms.length > 0) {
+        bannerPill.className = 'operational-banner-pill critical-mode';
+        pillDot.className = 'dot-indicator critical';
+        pillText.innerHTML = '<i class="fa-solid fa-person-burst me-1"></i> SOS: CÓ NGƯỜI KẸT (P1)';
+      } else if (hasFire) {
+        bannerPill.className = 'operational-banner-pill critical-mode';
+        pillDot.className = 'dot-indicator critical';
+        pillText.textContent = 'BÁO ĐỘNG HỎA HOẠN';
+      } else if (hasPanic) {
+        bannerPill.className = 'operational-banner-pill warning-mode';
+        pillDot.className = 'dot-indicator offline';
+        pillText.textContent = 'CẢNH BÁO AN NINH: CẦU CỨU TẠI PHÒNG';
+      } else if (hasWarn) {
+        bannerPill.className = 'operational-banner-pill warning-mode';
+        pillDot.className = 'dot-indicator offline';
+        pillText.textContent = 'CẢNH BÁO NGUY CƠ';
+      } else {
+        bannerPill.className = 'operational-banner-pill';
+        pillDot.className = 'dot-indicator';
+        pillText.textContent = 'HỆ THỐNG HOẠT ĐỘNG BÌNH THƯỜNG';
+      }
+
+      Object.keys(MONITORED_NODES).forEach(id => {
+        const d = liveNodesData[id];
+        const telemEl = document.getElementById(`device-telemetry-${id}`);
+        const sensEl = document.getElementById(`device-sensors-${id}`);
+        const badgeEl = document.getElementById(`device-badge-${id}`);
+        if (!telemEl || !sensEl || !badgeEl) return;
+        if (!d) {
+          telemEl.textContent = '-- PPM · --°C';
+          sensEl.textContent = '--';
+          badgeEl.innerHTML = '<span class="badge bg-secondary">CHỜ DỮ LIỆU</span>';
+          return;
+        }
+        const isOffline = d.last_seen && (now - d.last_seen > 25000);
+        const smoke = d.smoke_ppm ?? 0;
+        const temp = parseFloat(d.temperature ?? 0).toFixed(1);
+        telemEl.textContent = `${smoke} PPM · ${temp}°C`;
+
+        const flameText = d.flame_detected ? '<span class="text-danger fw-bold">CÓ LỬA</span>' : '<span class="text-success">Không</span>';
+        const sosText = (d.scream_detected || d.human_trapped || d.panic_sos) ? '<span class="badge bg-danger">SOS</span>' : '<span class="text-muted">Yên tĩnh</span>';
+        sensEl.innerHTML = `${flameText} · ${sosText}`;
+
+        if (d.human_trapped == 1 || (d.scream_detected == 1 && d.status === 'FIRE_ALARM')) {
+          badgeEl.innerHTML = '<span class="badge bg-danger">P1 CÓ NGƯỜI KẸT</span>';
+        } else if (d.status === 'FIRE_ALARM') {
+          badgeEl.innerHTML = '<span class="badge bg-danger">BÁO CHÁY</span>';
+        } else if (d.status === 'PANIC_SOS' || d.panic_sos == 1) {
+          badgeEl.innerHTML = '<span class="badge bg-warning text-dark">CẦU CỨU SOS</span>';
+        } else if (d.status === 'SMOKE_WARN') {
+          badgeEl.innerHTML = '<span class="badge bg-warning text-dark">CẢNH BÁO</span>';
+        } else if (isOffline) {
+          badgeEl.innerHTML = '<span class="badge bg-secondary">NGOẠI TUYẾN</span>';
+        } else {
+          badgeEl.innerHTML = '<span class="badge bg-success">HOẠT ĐỘNG</span>';
+        }
+      });
+
+      const isAnyEspOnline = Object.keys(MONITORED_NODES).some(id => {
+        const d = liveNodesData[id];
+        return d && d.last_seen && (now - d.last_seen <= 25000);
+      });
+      const espHealthEl = document.getElementById('health-esp32-status');
+      if (espHealthEl) {
+        if (isAnyEspOnline) {
+          espHealthEl.innerHTML = '<i class="fa-solid fa-check text-success"></i> HOẠT ĐỘNG';
+        } else {
+          espHealthEl.innerHTML = '<i class="fa-solid fa-xmark text-danger"></i> NGOẠI TUYẾN';
+        }
+      }
+    }
+
+    function updateKpiMetrics() {
+      const activeAlarms = allAlertEvents.filter(a => !a.is_resolved && a.severity === 'CRITICAL');
+      const activeWarnings = allAlertEvents.filter(a => !a.is_resolved && a.severity === 'WARNING');
+
+      const alarmCountEl = document.getElementById('kpi-active-alarms');
+      const alarmMetaEl = document.getElementById('kpi-alarm-meta');
+      const warnCountEl = document.getElementById('kpi-active-warnings');
+      const statusValueEl = document.getElementById('kpi-system-status');
+
+      alarmCountEl.textContent = String(activeAlarms.length).padStart(2, '0');
+      warnCountEl.textContent = String(activeWarnings.length).padStart(2, '0');
+
+      if (activeAlarms.length > 0) {
+        alarmCountEl.className = 'kpi-value text-danger';
+        alarmMetaEl.textContent = 'Yêu cầu xử lý khẩn cấp ngay!';
+        statusValueEl.textContent = 'BÁO CHÁY';
+        statusValueEl.className = 'kpi-value text-danger';
+      } else {
+        alarmCountEl.className = 'kpi-value text-dark';
+        alarmMetaEl.textContent = 'Các khu vực an toàn';
+        if (activeWarnings.length > 0) {
+          statusValueEl.textContent = 'CẢNH BÁO';
+          statusValueEl.className = 'kpi-value text-warning';
+        } else {
+          statusValueEl.textContent = 'BÌNH THƯỜNG';
+          statusValueEl.className = 'kpi-value text-success';
+        }
+      }
+
+      const totalNodes = Object.keys(MONITORED_NODES).length;
+      let onlineNodes = 0;
+      Object.keys(MONITORED_NODES).forEach(id => {
+        const d = liveNodesData[id];
+        if (d && d.last_seen && (Date.now() - d.last_seen <= 25000)) onlineNodes++;
+      });
+      const totalDevEl = document.getElementById('kpi-total-devices');
+      const totalDevMetaEl = document.getElementById('kpi-total-devices-meta');
+      if (totalDevEl) totalDevEl.textContent = totalNodes;
+      if (totalDevMetaEl) totalDevMetaEl.textContent = `${onlineNodes}/${totalNodes} nút đang trực tuyến`;
+    }
+
+    
+    function filterHistoryTable() {
+      const severityFilter = document.getElementById('filter-history-severity').value;
+      const statusFilter = document.getElementById('filter-history-status').value;
+
+      filteredAlertEvents = allAlertEvents.filter(item => {
+        if (severityFilter !== 'ALL' && item.severity !== severityFilter) return false;
+        if (statusFilter !== 'ALL') {
+          const isResolved = Boolean(item.is_resolved);
+          if (statusFilter === 'RESOLVED' && !isResolved) return false;
+          if (statusFilter === 'ACTIVE' && isResolved) return false;
+        }
+        return true;
+      });
+
+      document.getElementById('history-counter-text').textContent = `(${filteredAlertEvents.length} sự kiện được ghi nhận)`;
+      renderHistoryPage();
+    }
+
+    function renderHistoryPage() {
+      const tbody = document.getElementById('alarm-history-tbody');
+      const total = filteredAlertEvents.length;
+
+      if (total === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">Không có bản ghi lịch sử sự cố nào phù hợp bộ lọc.</td></tr>`;
+        document.getElementById('pagination-info').textContent = 'Hiển thị 0 trong số 0 sự kiện';
+        document.getElementById('btn-page-prev').disabled = true;
+        document.getElementById('btn-page-next').disabled = true;
+        document.getElementById('page-num-display').textContent = '1 / 1';
+        return;
+      }
+
+      const totalPages = Math.ceil(total / historyPerPage) || 1;
+      if (currentHistoryPage > totalPages) currentHistoryPage = totalPages;
+      if (currentHistoryPage < 1) currentHistoryPage = 1;
+
+      const start = (currentHistoryPage - 1) * historyPerPage;
+      const end = Math.min(start + historyPerPage, total);
+      const pageItems = filteredAlertEvents.slice(start, end);
+
+      document.getElementById('pagination-info').textContent = `Hiển thị ${start + 1} đến ${end} trong số ${total} sự kiện`;
+      document.getElementById('btn-page-prev').disabled = currentHistoryPage <= 1;
+      document.getElementById('btn-page-next').disabled = currentHistoryPage >= totalPages;
+      document.getElementById('page-num-display').textContent = `${currentHistoryPage} / ${totalPages}`;
+
+      let html = '';
+      pageItems.forEach(item => {
+        const timeStr = item.created_at ? new Date(item.created_at).toLocaleTimeString('vi-VN', { hour12: false }) : '--:--:--';
+        const nodeInfo = MONITORED_NODES[item.device_id] || {};
+        const deviceDisplay = nodeInfo.name || item.device_id || 'Đầu Báo';
+        const locDisplay = item.location || `${nodeInfo.floor || 'Tầng ?'} · ${nodeInfo.room || 'Phòng ?'}`;
+
+        let sevBadge = '<span class="badge bg-secondary-subtle text-secondary">THÔNG TIN</span>';
+        if (item.severity === 'CRITICAL') sevBadge = '<span class="badge bg-danger-subtle text-danger border border-danger-subtle">KHẨN CẤP</span>';
+        else if (item.severity === 'WARNING') sevBadge = '<span class="badge bg-warning-subtle text-warning border border-warning-subtle">CẢNH BÁO</span>';
+
+        let statusText = '<span class="text-danger fw-semibold"><i class="fa-solid fa-circle text-danger me-1" style="font-size: 8px;"></i> ĐANG DIỄN RA</span>';
+        if (item.is_resolved) {
+          statusText = '<span class="text-muted"><i class="fa-solid fa-check-double text-success me-1"></i> ĐÃ XỬ LÝ</span>';
+        }
+
+        html += `
+          <tr>
+            <td class="font-monospace text-muted">${timeStr}</td>
+            <td class="fw-medium">${escapeHtml(deviceDisplay)}</td>
+            <td class="text-secondary">${escapeHtml(locDisplay)}</td>
+            <td>
+              <div class="fw-semibold text-dark">${escapeHtml(item.title || '')}</div>
+              <div class="small text-muted">${escapeHtml(item.message || '')}</div>
+            </td>
+            <td>${sevBadge}</td>
+            <td>${statusText}</td>
+            <td style="text-align: right;">
+              <button class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="inspectAlertDetails('${item.id}')" title="Xem Chi Tiết">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger py-0 px-2 ms-1" onclick="deleteAlertRecord('${item.id}')" title="Xóa">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = html;
+    }
+
+    function paginateHistory(delta) {
+      currentHistoryPage += delta;
+      renderHistoryPage();
+    }
+
+    function resolveAlert(alertId) {
+      if (!db) return;
+      db.ref(`alerts/${alertId}`).update({
+        is_resolved: true,
+        resolved_at: firebase.database.ServerValue.TIMESTAMP
+      });
+    }
+
+    function deleteAlertRecord(alertId) {
+      if (!confirm('Bạn có chắc chắn muốn xóa vĩnh viễn bản ghi sự cố này?')) return;
+      if (!db) return;
+      db.ref(`alerts/${alertId}`).remove();
+    }
+
+    function clearAllAlarmHistory() {
+      if (!confirm('CẢNH BÁO: Bạn có chắc chắn muốn xóa toàn bộ lịch sử sự cố?')) return;
+      if (!db) return;
+      db.ref('alerts').remove();
+    }
+
+    function silenceAllBuzzers() {
+      if (!db) return;
+      Object.keys(MONITORED_NODES).forEach(id => {
+        db.ref(`devices/${id}/control/command`).set('MUTE_BUZZER');
+      });
+      alert('Đã gửi lệnh TẮT CÒI (MUTE_BUZZER) tới toàn bộ các nút.');
+    }
+
+    function triggerBuildingEvacuation() {
+      if (!confirm('THAO TÁC KHẨN CẤP: Kích hoạt còi báo động sơ tán toàn tòa nhà và mở toàn bộ cửa thoát hiểm?')) return;
+      if (!db) return;
+      const updates = {};
+      Object.keys(MONITORED_NODES).forEach(id => {
+        updates[`devices/${id}/control/command`] = 'TEST_ALARM';
+        updates[`devices/${id}/control/updated_at`] = firebase.database.ServerValue.TIMESTAMP;
+      });
+      db.ref().update(updates).then(() => {
+        alert('TÍN HIỆU SƠ TÁN KHẨN CẤP ĐÃ ĐƯỢC PHÁT TỚI TẤT CẢ CÁC TẦNG.');
+      });
+    }
+
+    function resetAllBuildingToNormal() {
+      if (!db) return;
+      const updates = {};
+      Object.keys(MONITORED_NODES).forEach(id => {
+        updates[`devices/${id}/control/command`] = 'RESET_SAFE';
+        updates[`devices/${id}/control/updated_at`] = firebase.database.ServerValue.TIMESTAMP;
+      });
+      allAlertEvents.forEach(a => {
+        if (!a.is_resolved) {
+          updates[`alerts/${a.id}/is_resolved`] = true;
+          updates[`alerts/${a.id}/resolved_at`] = firebase.database.ServerValue.TIMESTAMP;
+        }
+      });
+      db.ref().update(updates).then(() => {
+        alert('Đã gửi lệnh đặt lại trạng thái BÌNH THƯỜNG và đóng toàn bộ sự cố đang mở.');
+      });
+    }
+
+    function exportCsvReport() {
+      if (allAlertEvents.length === 0) {
+        alert('Không có bản ghi sự cố nào để xuất báo cáo.');
+        return;
+      }
+
+      let csv = '﻿ID,ThờiGian,ThiếtBị,VịTrí,MứcĐộ,Loại,MôTả,Khói_PPM,NhiệtĐộ_C,Lửa,TrạngThái\n';
+      allAlertEvents.forEach(item => {
+        const time = item.created_at ? new Date(item.created_at).toISOString() : '';
+        const node = MONITORED_NODES[item.device_id] || {};
+        const dev = item.title || node.name || item.device_id || '';
+        const loc = item.location || `${node.floor || ''} ${node.room || ''}`;
+        const desc = (item.message || '').replace(/"/g, '""');
+        const st = item.is_resolved ? 'ĐÃ XỬ LÝ' : 'ĐANG DIỄN RA';
+
+        csv += `"${item.id}","${time}","${dev}","${loc}","${item.severity || ''}","${item.alert_type || ''}","${desc}",${item.smoke_ppm || 0},${item.temperature || 0},${item.flame_detected ? 1 : 0},"${st}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `FireGuard_BaoCao_SuCo_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function inspectAlertDetails(alertId) {
+      const item = allAlertEvents.find(a => a.id === alertId);
+      if (!item) return;
+
+      const node = MONITORED_NODES[item.device_id] || {};
+      document.getElementById('inspect-title').textContent = item.title || node.name || 'Chi Tiết Sự Cố';
+      
+      const timeStr = item.created_at ? new Date(item.created_at).toLocaleString('vi-VN') : '--';
+      const body = document.getElementById('inspect-body');
+      body.innerHTML = `
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge ${item.severity === 'CRITICAL' ? 'bg-danger' : 'bg-warning'} px-2 py-1">[${item.severity === 'CRITICAL' ? 'KHẨN CẤP' : 'CẢNH BÁO'}] ${item.alert_type}</span>
+            <span class="text-muted small font-monospace">${timeStr}</span>
+          </div>
+          <h6 class="fw-bold mb-1">${escapeHtml(item.title || '')}</h6>
+          <p class="text-muted small mb-0">${escapeHtml(item.message || 'Không có mô tả chi tiết')}</p>
+        </div>
+
+        <div class="p-3 bg-light border rounded mb-3">
+          <div class="small fw-semibold text-secondary mb-2">THÔNG SỐ CẢM BIẾN LÚC PHÁT HIỆN:</div>
+          <div class="row g-2 text-center">
+            <div class="col-3 bg-white p-2 border rounded">
+              <small class="text-muted d-block">Mức Khói</small>
+              <strong class="fs-6">${item.smoke_ppm ?? 0}</strong> <small class="text-muted">ppm</small>
+            </div>
+            <div class="col-3 bg-white p-2 border rounded">
+              <small class="text-muted d-block">Nhiệt Độ</small>
+              <strong class="fs-6">${item.temperature ?? 0}</strong> <small class="text-muted">°C</small>
+            </div>
+            <div class="col-3 bg-white p-2 border rounded">
+              <small class="text-muted d-block">Cảm Biến Lửa</small>
+              <strong class="fs-6 ${item.flame_detected ? 'text-danger' : 'text-success'}">${item.flame_detected ? 'CÓ LỬA' : 'AN TOÀN'}</strong>
+            </div>
+            <div class="col-3 bg-white p-2 border rounded">
+              <small class="text-muted d-block">Mic Hét SOS</small>
+              <strong class="fs-6 ${item.scream_detected ? 'text-danger fw-bold' : 'text-success'}">${item.scream_detected ? 'PHÁT HIỆN' : 'YÊN TĨNH'}</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="small text-muted">
+          <div><strong>Vị trí:</strong> ${escapeHtml(item.location || node.room || 'Khu Vực Chung')}</div>
+          <div><strong>Mã Nút Thiết Bị:</strong> <code>${escapeHtml(item.device_id || 'N/A')}</code></div>
+          <div><strong>Trạng thái:</strong> ${item.is_resolved ? 'ĐÃ XỬ LÝ' : 'ĐANG DIỄN RA'}</div>
+        </div>
+      `;
+
+      const modal = new bootstrap.Modal(document.getElementById('modalInspect'));
+      modal.show();
+    }
+
+    function inspectFloor(floorName) {
+      let targetNode = null;
+      if (floorName.includes('1')) targetNode = 'ESP32_ROOM_101';
+      else if (floorName.includes('2')) targetNode = 'ESP32_ROOM_201';
+      else if (floorName.includes('3')) targetNode = 'ESP32_ROOM_301';
+
+      if (targetNode && liveNodesData[targetNode]) {
+        const d = liveNodesData[targetNode];
+        const node = MONITORED_NODES[targetNode];
+        const isTrapped = d.human_trapped == 1 || (d.scream_detected == 1 && d.status === 'FIRE_ALARM');
+        document.getElementById('inspect-title').textContent = `${floorName} · ${node.name}`;
+        
+        const trappedNotice = isTrapped ? `
+          <div class="p-2 mb-3 bg-danger text-white rounded d-flex align-items-center gap-2">
+            <i class="fa-solid fa-person-burst fs-5"></i>
+            <div>
+              <div class="fw-bold" style="font-size: 12.5px;">ƯU TIÊN CỨU HỘ SỐ 1: PHÁT HIỆN NGƯỜI MẮC KẸT</div>
+              <div style="font-size: 11px; opacity: 0.9;">Phát hiện âm thanh la hét cầu cứu (>85dB) trong điều kiện cháy! Cần cứu nạn khẩn cấp.</div>
+            </div>
+          </div>
+        ` : '';
+
+        document.getElementById('inspect-body').innerHTML = `
+          ${trappedNotice}
+          <div class="p-3 bg-light border rounded mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-bold">${node.room}</span>
+              <span class="badge ${isTrapped ? 'bg-danger' : (d.status === 'FIRE_ALARM' ? 'bg-danger' : (d.status === 'SMOKE_WARN' ? 'bg-warning text-dark' : 'bg-success'))}">${isTrapped ? 'P1 CÓ NGƯỜI KẸT' : (d.status === 'FIRE_ALARM' ? 'BÁO CHÁY' : (d.status === 'SMOKE_WARN' ? 'CẢNH BÁO' : 'AN TOÀN'))}</span>
+            </div>
+            <div class="row g-2 text-center">
+              <div class="col-3 bg-white p-2 border rounded">
+                <small class="text-muted d-block">Mức Khói</small>
+                <strong>${d.smoke_ppm ?? 0}</strong> ppm
+              </div>
+              <div class="col-3 bg-white p-2 border rounded">
+                <small class="text-muted d-block">Nhiệt Độ</small>
+                <strong>${parseFloat(d.temperature ?? 0).toFixed(1)}</strong> °C
+              </div>
+              <div class="col-3 bg-white p-2 border rounded">
+                <small class="text-muted d-block">Cửa Thoát Hiểm</small>
+                <strong>${d.servo_angle ?? 0}°</strong>
+              </div>
+              <div class="col-3 bg-white p-2 border rounded">
+                <small class="text-muted d-block">Mic Hét SOS</small>
+                <strong class="${d.scream_detected ? 'text-danger fw-bold' : 'text-success'}">${d.scream_detected ? 'PHÁT HIỆN' : 'YÊN TĨNH'}</strong>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-danger w-50" onclick="db.ref('devices/${targetNode}/control/command').set('TEST_ALARM')">Kích Hoạt Còi</button>
+            <button class="btn btn-sm btn-outline-success w-50" onclick="db.ref('devices/${targetNode}/control/command').set('RESET_SAFE')">Đặt Lại Bình Thường</button>
+          </div>
+        `;
+        const modal = new bootstrap.Modal(document.getElementById('modalInspect'));
+        modal.show();
+      }
+    }
+
+    function toggleAlarmBuzzerSound() {
+      soundEnabled = !soundEnabled;
+      const icon = document.getElementById('audio-icon');
+      if (soundEnabled) {
+        icon.className = 'fa-solid fa-volume-high';
+      } else {
+        icon.className = 'fa-solid fa-volume-xmark';
+      }
+    }
+
+    let lastSirenTime = 0;
+    function playBuzzerSound(isTrapped = false) {
+      if (!soundEnabled) return;
+      const now = Date.now();
+      const minInterval = isTrapped ? 1200 : 1800;
+      if (now - lastSirenTime < minInterval) return;
+      lastSirenTime = now;
+
+      try {
+        if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioContext.state === 'suspended') audioContext.resume();
+
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.type = 'sawtooth';
+
+        if (isTrapped) {
+          osc.frequency.setValueAtTime(1400, audioContext.currentTime);
+          osc.frequency.linearRampToValueAtTime(850, audioContext.currentTime + 0.25);
+          osc.frequency.linearRampToValueAtTime(1400, audioContext.currentTime + 0.5);
+          gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start();
+          osc.stop(audioContext.currentTime + 0.5);
+        } else {
+          osc.frequency.setValueAtTime(850, audioContext.currentTime);
+          osc.exponentialRampToValueAtTime(450, audioContext.currentTime + 0.4);
+          gain.gain.setValueAtTime(0.2, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start();
+          osc.stop(audioContext.currentTime + 0.4);
+        }
+      } catch (e) {}
+    }
+
+    function scrollToTrappedRoom() {
+      const target = document.getElementById('building-status-section');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+        const list = document.getElementById('building-floor-list');
+        if (list) {
+          list.style.transition = 'outline 0.3s';
+          list.style.outline = '3px solid #dc2626';
+          setTimeout(() => { list.style.outline = 'none'; }, 2500);
+        }
+      }
+    }
+
+    function dispatchRescueTeam() {
+      alert('LỆNH ĐIỀU ĐỘNG CỨU NẠN KHẨN CẤP ĐÃ ĐƯỢC PHÁT ĐI!\n\n- Đã gửi vị trí phòng có tiếng hét la cầu cứu đến bộ đàm đội cứu hộ cơ động.\n- Yêu cầu trang bị kìm cộng lực phá cửa và cáng cứu thương tại buồng thang máy gần nhất.');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function scrollToAlerts() {
+      document.getElementById('active-alerts-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function filterDeviceView(mode, btn) {
+      document.querySelectorAll('.filter-tabs-sm button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const now = Date.now();
+      Object.keys(MONITORED_NODES).forEach(id => {
+        const row = document.getElementById(`device-row-${id}`);
+        if (!row) return;
+        const d = liveNodesData[id];
+        const isOnline = d && d.last_seen && (now - d.last_seen <= 25000);
+        if (mode === 'ALL') {
+          row.style.display = '';
+        } else if (mode === 'ONLINE') {
+          row.style.display = isOnline ? '' : 'none';
+        } else if (mode === 'OFFLINE') {
+          row.style.display = !isOnline ? '' : 'none';
+        }
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+  </script>
+</body>
+</html>

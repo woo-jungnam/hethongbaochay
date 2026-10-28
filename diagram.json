@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "author": "Antigravity Multi-Zone Fire Safety & Life Rescue Simulation",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 60,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd",
+      "top": -170,
+      "left": -60,
+      "attrs": { "pins": "i2c" }
+    },
+
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_101",
+      "top": -160,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN NHIET AM DHT22 P.101 (T1)" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "smoke_101",
+      "top": -70,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN KHOI MQ-2 P.101 (T1)", "value": "80" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "flame_101",
+      "top": 30,
+      "left": -320,
+      "attrs": { "label": "CAM BIEN LUA FLAME P.101 (T1)" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "mic_101",
+      "top": 90,
+      "left": -320,
+      "attrs": { "label": "MACH CAM BIEN AM THANH KY-038 P.101 (ON=TIENG HET SOS)" }
+    },
+
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_201",
+      "top": 160,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN NHIET AM DHT22 P.201 (T2)" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "smoke_201",
+      "top": 250,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN KHOI MQ-2 P.201 (T2)", "value": "70" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "flame_201",
+      "top": 350,
+      "left": -320,
+      "attrs": { "label": "CAM BIEN LUA FLAME P.201 (T2)" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "mic_201",
+      "top": 410,
+      "left": -320,
+      "attrs": { "label": "MACH CAM BIEN AM THANH KY-038 P.201 (ON=TIENG HET SOS)" }
+    },
+
+    {
+      "type": "wokwi-dht22",
+      "id": "dht_301",
+      "top": 480,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN NHIET AM DHT22 P.301 (T3)" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "smoke_301",
+      "top": 570,
+      "left": -340,
+      "attrs": { "label": "CAM BIEN KHOI MQ-2 P.301 (T3)", "value": "60" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "flame_301",
+      "top": 660,
+      "left": -320,
+      "attrs": { "label": "CAM BIEN LUA FLAME P.301 (T3)" }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "mic_301",
+      "top": 720,
+      "left": -320,
+      "attrs": { "label": "MACH CAM BIEN AM THANH KY-038 P.301 (ON=TIENG HET SOS)" }
+    },
+
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": -100,
+      "left": 230,
+      "attrs": { "volume": "0.3" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_fire",
+      "top": -10,
+      "left": 230,
+      "attrs": { "color": "red", "label": "FIRE ALARM" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_smoke",
+      "top": 60,
+      "left": 230,
+      "attrs": { "color": "yellow", "label": "SMOKE WARN" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_safe",
+      "top": 130,
+      "left": 230,
+      "attrs": { "color": "green", "label": "SAFE NORMAL" }
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo",
+      "top": 210,
+      "left": 220,
+      "attrs": { "horn": "single" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_emergency",
+      "top": 280,
+      "left": 230,
+      "attrs": { "color": "red", "label": "NUT BAO CHAY KHAN CAP" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "lcd:GND", "esp:GND.1", "black", [ "v-20", "h-40" ] ],
+    [ "lcd:VCC", "esp:5V", "red", [ "v-10", "h-50" ] ],
+    [ "lcd:SDA", "esp:21", "green", [ "v-15" ] ],
+    [ "lcd:SCL", "esp:22", "blue", [ "v-25" ] ],
+
+    [ "dht_101:VCC", "esp:3V3", "red", [ "v10", "h120" ] ],
+    [ "dht_101:GND", "esp:GND.1", "black", [ "v20", "h110" ] ],
+    [ "dht_101:SDA", "esp:33", "gold", [ "h80" ] ],
+
+    [ "smoke_101:GND", "esp:GND.1", "black", [ "v20", "h110" ] ],
+    [ "smoke_101:VCC", "esp:3V3", "red", [ "v-20", "h120" ] ],
+    [ "smoke_101:SIG", "esp:34", "purple", [ "h60" ] ],
+
+    [ "flame_101:1", "esp:GND.1", "black", [ "h10", "v-80" ] ],
+    [ "flame_101:2", "esp:32", "orange", [ "h40" ] ],
+    [ "flame_101:3", "esp:3V3", "red", [ "h20", "v-100" ] ],
+
+    [ "mic_101:1", "esp:GND.1", "black", [ "h10", "v-40" ] ],
+    [ "mic_101:2", "esp:13", "blue", [ "h50" ] ],
+    [ "mic_101:3", "esp:3V3", "red", [ "h20", "v-60" ] ],
+
+    [ "dht_201:VCC", "esp:3V3", "red", [ "v-40", "h120" ] ],
+    [ "dht_201:GND", "esp:GND.1", "black", [ "v-30", "h110" ] ],
+    [ "dht_201:SDA", "esp:27", "gold", [ "h80" ] ],
+
+    [ "smoke_201:GND", "esp:GND.1", "black", [ "v-60", "h110" ] ],
+    [ "smoke_201:VCC", "esp:3V3", "red", [ "v-70", "h120" ] ],
+    [ "smoke_201:SIG", "esp:35", "purple", [ "h60" ] ],
+
+    [ "flame_201:1", "esp:GND.2", "black", [ "v40", "h360" ] ],
+    [ "flame_201:2", "esp:4", "orange", [ "v30", "h340" ] ],
+    [ "flame_201:3", "esp:3V3", "red", [ "v20", "h320" ] ],
+
+    [ "mic_201:1", "esp:GND.2", "black", [ "v20", "h360" ] ],
+    [ "mic_201:2", "esp:16", "cyan", [ "v10", "h340" ] ],
+    [ "mic_201:3", "esp:3V3", "red", [ "v-10", "h320" ] ],
+
+    [ "dht_301:VCC", "esp:3V3", "red", [ "v-80", "h120" ] ],
+    [ "dht_301:GND", "esp:GND.1", "black", [ "v-90", "h110" ] ],
+    [ "dht_301:SDA", "esp:14", "gold", [ "h80" ] ],
+
+    [ "smoke_301:GND", "esp:GND.1", "black", [ "v-120", "h110" ] ],
+    [ "smoke_301:VCC", "esp:3V3", "red", [ "v-130", "h120" ] ],
+    [ "smoke_301:SIG", "esp:VN", "purple", [ "h60" ] ],
+
+    [ "flame_301:1", "esp:GND.2", "black", [ "v-30", "h360" ] ],
+    [ "flame_301:2", "esp:5", "orange", [ "v-20", "h340" ] ],
+    [ "flame_301:3", "esp:3V3", "red", [ "v-10", "h320" ] ],
+
+    [ "mic_301:1", "esp:GND.2", "black", [ "v-40", "h360" ] ],
+    [ "mic_301:2", "esp:17", "magenta", [ "v-50", "h340" ] ],
+    [ "mic_301:3", "esp:3V3", "red", [ "v-60", "h320" ] ],
+
+    [ "buzzer:1", "esp:GND.2", "black", [ "h-30", "v60" ] ],
+    [ "buzzer:2", "esp:25", "cyan", [ "h-40", "v120" ] ],
+
+    [ "led_fire:C", "esp:GND.2", "black", [ "h-20" ] ],
+    [ "led_fire:A", "esp:23", "red", [ "h-30" ] ],
+
+    [ "led_smoke:C", "esp:GND.2", "black", [ "h-20" ] ],
+    [ "led_smoke:A", "esp:19", "gold", [ "h-30" ] ],
+
+    [ "led_safe:C", "esp:GND.2", "black", [ "h-20" ] ],
+    [ "led_safe:A", "esp:18", "green", [ "h-30" ] ],
+
+    [ "servo:GND", "esp:GND.2", "black", [ "h-30" ] ],
+    [ "servo:V+", "esp:5V", "red", [ "h-40", "v-80" ] ],
+    [ "servo:PWM", "esp:26", "magenta", [ "h-30" ] ],
+
+    [ "btn_emergency:1.l", "esp:15", "red", [ "h-40" ] ],
+    [ "btn_emergency:2.l", "esp:3V3", "red", [ "h-50", "v-160" ] ]
+  ],
+  "serialMonitor": {
+    "display": "auto"
+  }
+}

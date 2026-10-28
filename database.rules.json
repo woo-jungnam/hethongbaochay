@@ -1,0 +1,23 @@
+{
+  "rules": {
+    "devices": {
+      "$deviceId": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["status", "last_seen"]
+      }
+    },
+    "alerts": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["created_at", "severity", "is_acknowledged"]
+    },
+    "logs": {
+      "$deviceId": {
+        ".read": true,
+        ".write": true,
+        ".indexOn": ["recorded_at"]
+      }
+    }
+  }
+}
